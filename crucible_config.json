@@ -1,0 +1,81 @@
+{
+  "_comment": "Crucible configuration. Copy this file and edit for your deployment.",
+
+  "sandbox": {
+    "image": "crucible-sandbox:latest",
+    "fallback_image": "python:3.11-slim",
+    "memory_limit": "256m",
+    "cpu_quota": 50000,
+    "timeout_seconds": 30,
+    "setup_timeout_seconds": 60
+  },
+
+  "execution": {
+    "default_mode": "development",
+    "max_total_attempts": 12
+  },
+
+  "escalation_chain": [
+    {
+      "tier": 1,
+      "name": "Little Qwen",
+      "provider": "ollama",
+      "model": "qwen3.5:9b",
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "max_attempts": 3,
+      "break_on_repeat_error": true
+    },
+    {
+      "tier": 2,
+      "name": "Qwen",
+      "provider": "deepinfra",
+      "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+      "temperature": 0.1,
+      "max_tokens": 8192,
+      "max_attempts": 3,
+      "break_on_repeat_error": true
+    },
+    {
+      "tier": 3,
+      "name": "Big Qwen",
+      "provider": "deepinfra",
+      "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-Turbo",
+      "temperature": 0.1,
+      "max_tokens": 8192,
+      "max_attempts": 2,
+      "break_on_repeat_error": true
+    },
+    {
+      "tier": 4,
+      "name": "Deepdick",
+      "provider": "deepseek",
+      "model": "deepseek-reasoner",
+      "temperature": 0.1,
+      "max_tokens": 8192,
+      "max_attempts": 2,
+      "break_on_repeat_error": true
+    },
+    {
+      "tier": 5,
+      "name": "Claude Sonnet",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-6",
+      "temperature": 0.1,
+      "max_tokens": 16384,
+      "max_attempts": 2,
+      "break_on_repeat_error": false
+    }
+  ],
+
+  "memory": {
+    "chroma_persist_dir": "./chroma_db",
+    "lessons_per_prompt": 5
+  },
+
+  "security": {
+    "threat_detection_enabled": true,
+    "deceptive_mode_llm_check": true,
+    "canary_key_prefix": "sk-ant-canary"
+  }
+}

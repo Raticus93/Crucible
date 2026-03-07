@@ -1,0 +1,43 @@
+# Crucible pre-warmed sandbox image.
+# Build: docker build -f Dockerfile.sandbox -t crucible-sandbox:latest .
+#
+# Contains the most common packages used in AI-generated code so that
+# the execution phase runs offline (network_disabled=True). The setup
+# phase (dynamic pip install for task-specific packages) still has
+# network access; only the RUN phase is isolated.
+
+FROM python:3.11-slim
+
+# System deps for common native extensions
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libffi-dev \
+    libssl-dev \
+    libfaketime \
+    && rm -rf /var/lib/apt/lists/*
+
+# Pre-warm the most common packages
+RUN pip install --no-cache-dir \
+    # Crypto & security
+    cryptography \
+    pynacl \
+    # HTTP & networking (available in setup phase)
+    requests \
+    httpx \
+    # Data
+    numpy \
+    pandas \
+    # Parsing & serialisation
+    lxml \
+    beautifulsoup4 \
+    pyyaml \
+    toml \
+    # Utilities
+    python-dateutil \
+    click \
+    rich \
+    tqdm \
+    # Testing
+    pytest
+
+WORKDIR /workspace
